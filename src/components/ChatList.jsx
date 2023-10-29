@@ -1,4 +1,4 @@
-import { Box, Avatar, List, ListItemText, ListItem, ListItemAvatar, Button } from '@mui/material'
+import { Box, Avatar, List, ListItemText, ListItem, ListItemAvatar } from '@mui/material'
 import React, { useEffect } from 'react'
 import '../css/chats.css'
 import { AddNavBar } from './miscallaneous'
@@ -19,13 +19,13 @@ const ChatList = ({ chats, currentChat }) => {
                 {
                     chats.map((chat) => {
                         const { usernames, _id, lastMessage: { message } } = chat
-                        const otherUsername = (usernames[0] == username) ? usernames[1] : usernames[0]
+                        const otherUsername = (usernames[0] === username) ? usernames[1] : usernames[0]
                         return <Box key={_id}>
                             <ListItem button onClick={() => { currentChat.setCurrentChat(chat) }}>
                                 <ListItemAvatar>
                                     <Avatar alt="Profile Picture" src={`http://localhost:5000/profilePicture/${otherUsername}`} />
                                 </ListItemAvatar>
-                                <ListItemText primary={otherUsername} secondary={message} />
+                                <ListItemText primary={otherUsername} secondary={`${chat.lastMessage.senderUsername === username ? 'You: ' : ''}${message}`} />
                             </ListItem>
                         </Box>
                     })

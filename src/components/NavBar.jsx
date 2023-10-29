@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AppBar from '@mui/material/AppBar'
 import { Box, Avatar } from '@mui/material'
 import Toolbar from '@mui/material/Toolbar'
@@ -17,21 +17,26 @@ import { Search, SearchIconWrapper, StyledInputBase } from './miscallaneous'
 import Circle from '@mui/icons-material/Circle'
 import { useContextState } from '../context/AuthContext'
 import { useNavigate } from 'react-router'
+import postData from '../utils/postData'
 
-const NavBar = () => {
-    const [anchorEl, setAnchorEl] = React.useState(null)
+const NavBar = ({chats,setChats}) => {
+
+    const x = chats
+    const [anchorEl, setAnchorEl] = useState(null)
+    // const [anchorElement, setAnchorElement] = useState(null);
+    // const open = Boolean(anchorElement)
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
     const { user: { username }, setUser } = useContextState()
     const isMenuOpen = Boolean(anchorEl)
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
     const navigate = useNavigate()
-    const handleProfileMenuOpen = (event) => { setAnchorEl(event.currentTarget) }
+    const handleProfileMenuOpen = (event) => { setAnchorEl(event.currentTarget); }
     const handleMobileMenuClose = () => { setMobileMoreAnchorEl(null) }
     const handleMenuClose = () => { setAnchorEl(null); handleMobileMenuClose() }
     const handleMobileMenuOpen = (event) => { setMobileMoreAnchorEl(event.currentTarget) }
     const logout = () => { setUser({}); navigate('/'); localStorage.removeItem('jwt') }
     const menuId = 'primary-search-account-menu'
-
+    const [searchQuery, setSearchQuery] = useState('')
     const renderMenu = (
         <Menu
             anchorEl={anchorEl}
@@ -56,9 +61,9 @@ const NavBar = () => {
     const mobileMenuId = 'primary-search-account-menu-mobile'
     const renderMobileMenu = (
         <Menu anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+        anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
             }}
             id={mobileMenuId}
             keepMounted
@@ -68,7 +73,7 @@ const NavBar = () => {
             }}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
-        >
+            >
             <MenuItem>
                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                     <Badge badgeContent={4} color="error">
@@ -93,7 +98,18 @@ const NavBar = () => {
             </MenuItem>
         </Menu>
     )
-
+    
+    const addUser = (e)=>{
+        e.preventDefault();
+        postData('POST','createChat',{
+            jwt:localStorage.getItem('jwt'),
+            usernames:[`${searchQuery}`]
+        }).then((data)=>{
+            console.log(data)
+            setChats([...x,data])
+        })
+        .catch(err=>{console.log(err)})
+    }
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -109,7 +125,17 @@ const NavBar = () => {
                         <SearchIconWrapper>
                             <SearchIcon />
                         </SearchIconWrapper>
-                        <StyledInputBase placeholder="Find pingers" inputProps={{ 'aria-label': 'search' }} />
+                        <form onSubmit={addUser}>
+                            <StyledInputBase placeholder="Find pingers" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} inputProps={{ 'aria-label': 'search' }} />
+                        </form>
+                        {/* aria-controls={open ? 'basic-menuu' : undefined} aria-haspopup="true" aria-expanded={open ? 'true' : undefined} id='searchBare' */}
+                        {/* <Menu id="basic-menuu" anchorEl={anchorElement} open={() => { setAnchorElement(anchorElement) }} onClose={() => { setAnchorElement(null) }} MenuListProps={{ 'aria-labelledby': 'searchBare' }}>
+                            {
+                                allUsernames.map((e) => {
+                                    return <MenuItem onClick={() => { }}>{e}</MenuItem>
+                                })
+                            }
+                        </Menu> */}
                     </Search>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -119,7 +145,7 @@ const NavBar = () => {
                             </Badge>
                         </IconButton>
                         <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-                            <Badge badgeContent={69} color="error">
+                            <Badge badgeContent={4} color="error">
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>

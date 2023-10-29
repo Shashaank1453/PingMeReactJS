@@ -15,9 +15,12 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { Avatar } from '@mui/material';
 import Circle from '@mui/icons-material/Circle';
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar({user:{username},currentChat}) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const {usernames,isGroupChat,groupName} = currentChat
+  const chatName = isGroupChat?groupName:(username==usernames[0]?usernames[1]:usernames[0])
+
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -65,24 +68,12 @@ export default function PrimarySearchAppBar() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <Avatar src='https://mui.com/static/images/avatar/1.jpg' />
+          <IconButton size="large" edge="start" color="inherit" aria-label="open drawer" sx={{ mr: 2 }}>
+            <Avatar src={`/profilePicture/${chatName}`} />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-          >
-            Shashank Desai
+          <Typography variant="h6" noWrap component="div" sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {chatName}
           </Typography>
-          {/* <Chip sx={{ml:'5px'}} label="Online" color="primary" /> */}
           <Circle sx={{color:'#90EE90',ml:'10px',height:'15px'}}/>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
@@ -91,23 +82,12 @@ export default function PrimarySearchAppBar() {
                 <VideocamIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              color="inherit"
-            >
+            <IconButton size="large" color="inherit" >
               <Badge badgeContent={0} color="error">
                 <CallIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
+            <IconButton size="large" edge="end" aria-label="account of current user" aria-controls={menuId} aria-haspopup="true" onClick={handleProfileMenuOpen} color="inherit" >
               <MoreVertIcon />
             </IconButton>
           </Box>
